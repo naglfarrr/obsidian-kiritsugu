@@ -2,15 +2,25 @@ import { App, Editor, MarkdownView, Modal, Notice, Plugin, PluginSettingTab, Set
 
 // Remember to rename these classes and interfaces!
 
+/**
+ * 在这里添加所需的配置字段
+ */
 interface MyPluginSettings {
 	mySetting: string;
 }
 
+/**
+ * 默认配置值
+ */
 const DEFAULT_SETTINGS: MyPluginSettings = {
 	mySetting: 'default'
 }
 
 export default class MyPlugin extends Plugin {
+	
+	/**
+	 * 配置对象
+	 */
 	settings: MyPluginSettings;
 
 	async onload() {
@@ -34,6 +44,7 @@ export default class MyPlugin extends Plugin {
 			name: 'Open sample modal (simple)',
 			callback: () => {
 				new SampleModal(this.app).open();
+				new TestModal(this.app).open();
 			}
 		});
 		// This adds an editor command that can perform some operation on the current editor instance
@@ -83,7 +94,7 @@ export default class MyPlugin extends Plugin {
 	}
 
 	async loadSettings() {
-		this.settings = Object.assign({}, DEFAULT_SETTINGS, await this.loadData());
+		this.settings = Object.assign({}, DEFAULT_SETTINGS, await this.loadData());  // 将后面的所有参数内容复制到第一个参数，并返回它
 	}
 
 	async saveSettings() {
@@ -99,6 +110,25 @@ class SampleModal extends Modal {
 	onOpen() {
 		const {contentEl} = this;
 		contentEl.setText('Woah!');
+	}
+
+	onClose() {
+		const {contentEl} = this;
+		contentEl.empty();
+	}
+}
+
+/**
+ * 测试用弹窗
+ */
+class TestModal extends Modal {
+	constructor(app: App) {
+		super(app);
+	}
+
+	onOpen() {
+		const {contentEl} = this;
+		contentEl.setText('ん？');
 	}
 
 	onClose() {
