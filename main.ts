@@ -1,4 +1,4 @@
-import { App, Editor, MarkdownView, Modal, Notice, Plugin, PluginSettingTab, Setting } from 'obsidian';
+import { App, Editor, MarkdownView, Modal, Menu, Notice, Plugin, PluginSettingTab, Setting } from 'obsidian';
 
 // Remember to rename these classes and interfaces!
 
@@ -30,6 +30,20 @@ export default class MyPlugin extends Plugin {
 		const ribbonIconEl = this.addRibbonIcon('dice', 'Kiritsugu', (evt: MouseEvent) => {
 			// Called when the user clicks the icon.
 			new Notice('僕ね、正義の味方に、なりたいな');
+			
+			// 测试菜单
+			const menu = new Menu(this.app);
+			
+			menu.addItem((item) =>
+				item
+					.setTitle("世界を、救う")
+					.setIcon("documents")
+					.onClick(() => {
+						new Notice("あなたを、許すない...");
+					})
+			);
+
+			menu.showAtMouseEvent(evt);
 		});
 		// Perform additional things with the ribbon
 		ribbonIconEl.addClass('my-plugin-ribbon-class');
