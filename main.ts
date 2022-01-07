@@ -57,7 +57,7 @@ export default class MyPlugin extends Plugin {
 			id: 'open-sample-modal-simple',
 			name: 'Open sample modal (simple)',
 			callback: () => {
-				new SampleModal(this.app).open();
+				// new SampleModal(this.app).open();
 				new TestModal(this.app).open();
 			}
 		});
@@ -143,6 +143,22 @@ class TestModal extends Modal {
 	onOpen() {
 		const {contentEl} = this;
 		contentEl.setText('ん？');
+		contentEl.addEventListener('click', (evt: MouseEvent) => {
+			new Notice(evt.button.toString());
+			// 测试菜单
+			const menu = new Menu(this.app);
+			
+			menu.addItem((item) =>
+				item
+					.setTitle("世界を、救う")
+					.setIcon("documents")
+					.onClick(() => {
+						new Notice("あなたを、許すない...");
+					})
+			);
+
+			menu.showAtMouseEvent(evt);
+		});
 	}
 
 	onClose() {
