@@ -1,4 +1,4 @@
-import { App, Editor, MarkdownView, Modal, Menu, Notice, Plugin, PluginSettingTab, Setting } from 'obsidian';
+import { App, Editor, MarkdownView, ItemView, WorkspaceLeaf, Modal, Menu, Notice, Plugin, PluginSettingTab, Setting } from 'obsidian';
 
 // Remember to rename these classes and interfaces!
 
@@ -25,6 +25,14 @@ export default class MyPlugin extends Plugin {
 
 	async onload() {
 		await this.loadSettings();
+
+		// 注册 TestView
+		this.registerView(VIEW_TYPE_TEST, (leaf) => new TestView(leaf));
+
+		// 添加一个激活 TestView 的按钮
+		this.addRibbonIcon("dice", "Activate View", () => {
+			this.activateView();
+		})
 
 		// This creates an icon in the left ribbon.
 		const ribbonIconEl = this.addRibbonIcon('dice', 'Kiritsugu', (evt: MouseEvent) => {
@@ -104,7 +112,7 @@ export default class MyPlugin extends Plugin {
 	}
 
 	onunload() {
-
+		this.app.workspace.detachLeavesOfType(VIEW_TYPE_TEST);
 	}
 
 	async loadSettings() {
@@ -113,6 +121,19 @@ export default class MyPlugin extends Plugin {
 
 	async saveSettings() {
 		await this.saveData(this.settings);
+	}
+
+	async activateView() {
+		this.app.workspace.detachLeavesOfType(VIEW_TYPE_TEST);
+
+		await this.app.workspace.getLeftLeaf(false).setViewState({
+			type: VIEW_TYPE_TEST,
+			active: true,
+		})
+
+		await this.app.workspace.revealLeaf(
+			this.app.workspace.getLeavesOfType(VIEW_TYPE_TEST)[0]
+		);
 	}
 }
 
@@ -193,5 +214,32 @@ class SampleSettingTab extends PluginSettingTab {
 					this.plugin.settings.mySetting = value;
 					await this.plugin.saveSettings();
 				}));
+	}
+}
+
+export const VIEW_TYPE_TEST = "test-view";
+
+export class TestView extends ItemView {
+	constructor(leaf: WorkspaceLeaf) {
+		super(leaf);
+	}
+
+	getViewType(): string {
+		return VIEW_TYPE_TEST;
+	}
+
+	getDisplayText(): string {
+		return "Test view";
+	}
+
+	async onOpen(): Promise<void> {
+		const container = this.containerEl.children[1];
+		container.empty();
+		container.createEl("h4", { text: "Test view"});
+		container.createEl("a", { href: "https://www.baidu.com/", text:"baidu" });
+	}
+
+	async onClose(): Promise<void> {
+		// nothing to clean up
 	}
 }
