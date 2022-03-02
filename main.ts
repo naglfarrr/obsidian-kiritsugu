@@ -70,6 +70,7 @@ export default class MyPlugin extends Plugin {
 			}
 		});
 		// This adds an editor command that can perform some operation on the current editor instance
+		// 只有在编辑状态下，这条命令才会出现
 		this.addCommand({
 			id: 'sample-editor-command',
 			name: 'Sample editor command',
@@ -95,6 +96,33 @@ export default class MyPlugin extends Plugin {
 					// This command will only show up in Command Palette when the check function returns true
 					return true;
 				}
+			}
+		});
+
+		// 命令：clipboard => msdoc
+		this.addCommand({
+			id: 'clipboard2msdoc',
+			name: 'clipboard => msdoc',
+			editorCallback: (editor: Editor, view: MarkdownView) => {
+				// 获取剪贴板文本
+				// 加工
+				// 写入光标位置
+			}
+		});
+
+		// 命令：select => msdoc
+		this.addCommand({
+			id: 'select2msdoc',
+			name: 'select => msdoc',
+			editorCallback: (editor: Editor, view: MarkdownView) => {
+				// 获取选中文本
+				let text = editor.getSelection();
+				// 加工
+				// text = 'It takes two to tangle.\n\n' + text;
+				text = '> ' + text.replace(/\n/g, '\n> ');
+				text = '> [!note: ]+\n' + text;
+				// 替换选中内容
+				editor.replaceSelection(text);
 			}
 		});
 
@@ -242,4 +270,11 @@ export class TestView extends ItemView {
 	async onClose(): Promise<void> {
 		// nothing to clean up
 	}
+}
+
+/*================= 文本处理 ======================================================*/ 
+
+function formatting(text: String, callback: (text: String) => void) {
+	//
+	return 'bonjour!';
 }
